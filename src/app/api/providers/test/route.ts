@@ -7,9 +7,6 @@ import { getProviderInfo } from "@/lib/providers"
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
 
     const body = await request.json()
     const { api_key_id } = body

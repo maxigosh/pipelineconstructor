@@ -6,9 +6,6 @@ import { encrypt, decrypt, maskApiKey } from "@/lib/encryption"
 export async function GET() {
   try {
     const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
 
     const apiKeys = await prisma.apiKey.findMany({
       where: { user_id: user.id },
@@ -43,9 +40,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
 
     const body = await request.json()
     const { provider, label, key, base_url } = body
@@ -94,9 +88,6 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
 
     const keyId = request.nextUrl.searchParams.get("id")
     if (!keyId) {

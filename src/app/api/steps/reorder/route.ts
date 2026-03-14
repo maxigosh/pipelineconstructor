@@ -5,9 +5,6 @@ import { prisma } from "@/lib/prisma"
 export async function PATCH(request: NextRequest) {
   try {
     const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
 
     const body = await request.json()
     const { pipeline_id, step_ids } = body as {

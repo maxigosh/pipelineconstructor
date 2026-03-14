@@ -7,12 +7,6 @@ import type { PipelineProgress } from "@/lib/pipeline-runner"
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser()
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      })
-    }
 
     const { pipelineId, input } = await request.json()
 
