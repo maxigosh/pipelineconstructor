@@ -23,7 +23,7 @@ export async function GET() {
   } catch (error) {
     console.error("Failed to list pipelines:", error)
     return NextResponse.json(
-      { error: "Failed to list pipelines" },
+      { error: "Failed to list pipelines", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Failed to create pipeline:", error)
     return NextResponse.json(
-      { error: "Failed to create pipeline" },
+      { error: "Failed to create pipeline", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

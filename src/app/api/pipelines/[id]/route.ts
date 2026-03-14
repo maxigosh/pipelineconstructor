@@ -38,7 +38,7 @@ export async function GET(
   } catch (error) {
     console.error("Failed to get pipeline:", error)
     return NextResponse.json(
-      { error: "Failed to get pipeline" },
+      { error: "Failed to get pipeline", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
@@ -86,7 +86,7 @@ export async function PATCH(
   } catch (error) {
     console.error("Failed to update pipeline:", error)
     return NextResponse.json(
-      { error: "Failed to update pipeline" },
+      { error: "Failed to update pipeline", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
@@ -125,7 +125,7 @@ export async function DELETE(
   } catch (error) {
     console.error("Failed to delete pipeline:", error)
     return NextResponse.json(
-      { error: "Failed to delete pipeline" },
+      { error: "Failed to delete pipeline", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

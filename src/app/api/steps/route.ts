@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Failed to list steps:", error)
     return NextResponse.json(
-      { error: "Failed to list steps" },
+      { error: "Failed to list steps", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Failed to create step:", error)
     return NextResponse.json(
-      { error: "Failed to create step" },
+      { error: "Failed to create step", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
@@ -156,7 +156,7 @@ export async function PATCH(request: NextRequest) {
   } catch (error) {
     console.error("Failed to update step:", error)
     return NextResponse.json(
-      { error: "Failed to update step" },
+      { error: "Failed to update step", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
@@ -207,7 +207,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error("Failed to delete step:", error)
     return NextResponse.json(
-      { error: "Failed to delete step" },
+      { error: "Failed to delete step", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

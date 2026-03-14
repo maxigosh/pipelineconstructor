@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Failed to test API key:", error)
     return NextResponse.json(
-      { error: "Failed to test API key" },
+      { error: "Failed to test API key", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

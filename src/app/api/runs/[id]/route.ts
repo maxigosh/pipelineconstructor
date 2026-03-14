@@ -40,7 +40,7 @@ export async function GET(
   } catch (error) {
     console.error("Failed to get run:", error)
     return NextResponse.json(
-      { error: "Failed to get run" },
+      { error: "Failed to get run", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
