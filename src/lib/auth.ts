@@ -57,9 +57,19 @@ export async function getDemoUser() {
 }
 
 export async function getCurrentUser() {
-  const authUser = await getAuthUser()
-  if (authUser) return authUser
+  try {
+    const authUser = await getAuthUser()
+    if (authUser) return authUser
+  } catch {
+    // Supabase auth failed, fall through to demo user
+  }
 
   // Always fall back to demo user when Supabase Auth is not configured
-  return getDemoUser()
+  try {
+    return await getDemoUser()
+  } catch (e) {
+    console.error("Failed to get/create demo user:", e)
+    // Return a minimal user object so routes never get null
+    return { id: DEMO_USER_ID, email: "demo@pipeline.dev", name: "Demo User", avatar_url: null, created_at: new Date() }
+  }
 }
