@@ -3,11 +3,13 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 async function main() {
-  // Create demo user
+  // Create demo user with fixed UUID
+  const DEMO_USER_ID = "00000000-0000-0000-0000-000000000001"
   const user = await prisma.user.upsert({
-    where: { email: "demo@pipeline.dev" },
+    where: { id: DEMO_USER_ID },
     update: {},
     create: {
+      id: DEMO_USER_ID,
       email: "demo@pipeline.dev",
       name: "Demo User",
     },

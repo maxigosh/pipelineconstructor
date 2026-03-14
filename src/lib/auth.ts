@@ -39,20 +39,19 @@ export async function getAuthUser() {
   }
 }
 
-// For demo/development: get or create a demo user
-export async function getDemoUser() {
-  let user = await prisma.user.findUnique({
-    where: { email: "demo@pipeline.dev" },
-  })
+const DEMO_USER_ID = "00000000-0000-0000-0000-000000000001"
 
-  if (!user) {
-    user = await prisma.user.create({
-      data: {
-        email: "demo@pipeline.dev",
-        name: "Demo User",
-      },
-    })
-  }
+// For demo/development: get or create a demo user with a fixed UUID
+export async function getDemoUser() {
+  const user = await prisma.user.upsert({
+    where: { id: DEMO_USER_ID },
+    update: {},
+    create: {
+      id: DEMO_USER_ID,
+      email: "demo@pipeline.dev",
+      name: "Demo User",
+    },
+  })
 
   return user
 }
@@ -61,10 +60,6 @@ export async function getCurrentUser() {
   const authUser = await getAuthUser()
   if (authUser) return authUser
 
-  // Fallback to demo user in development
-  if (process.env.NODE_ENV === "development") {
-    return getDemoUser()
-  }
-
-  return null
+  // Always fall back to demo user when Supabase Auth is not configured
+  return getDemoUser()
 }
