@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Provider {
+  openai
+  anthropic
+  google
+  mistral
+  groq
+  openrouter
+  custom
+}
+
+enum RunStatus {
+  pending
+  running
+  completed
+  failed
+  cancelled
+}
+
+enum StepStatus {
+  pending
+  running
+  completed
+  failed
+}
+
+model User {
+  id         String    @id @default(uuid()) @db.Uuid
+  email      String    @unique
+  name       String?
+  avatar_url String?
+  created_at DateTime  @default(now())
+
+  pipelines Pipeline[]
+  api_keys  ApiKey[]
+  runs      Run[]
+}
+
+model ApiKey {
+  id            String    @id @default(uuid()) @db.Uuid
+  user_id       String    @db.Uuid
+  provider      Provider
+  label         String
+  encrypted_key String
+  base_url      String?
+  is_active     Boolean   @default(true)
+  last_used_at  DateTime?
+  created_at    DateTime  @default(now())
+
+  user  User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  steps Step[]
+
+  @@index([user_id])
+}
+
+model Pipeline {
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  name        String
+  description String?
+  is_public   Boolean  @default(false)
+  is_template Boolean  @default(false)
+  tags        String[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user  User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  steps Step[]
+  runs  Run[]
+
+  @@index([user_id])
+}
+
+model Step {
+  id             String   @id @default(uuid()) @db.Uuid
+  pipeline_id    String   @db.Uuid
+  order          Int
+  name           String
+  system_prompt  String?
+  user_prompt    String
+  provider       Provider
+  model          String
+  api_key_id     String?  @db.Uuid
+  config         Json     @default("{}")
+  input_mapping  Json     @default("{}")
+  output_mapping Json     @default("{}")
+
+  pipeline     Pipeline     @relation(fields: [pipeline_id], references: [id], onDelete: Cascade)
+  api_key      ApiKey?      @relation(fields: [api_key_id], references: [id], onDelete: SetNull)
+  step_results StepResult[]
+
+  @@index([pipeline_id])
+  @@unique([pipeline_id, order])
+}
+
+model Run {
+  id              String    @id @default(uuid()) @db.Uuid
+  pipeline_id     String    @db.Uuid
+  user_id         String    @db.Uuid
+  status          RunStatus @default(pending)
+  input           Json      @default("{}")
+  current_step    Int       @default(0)
+  started_at      DateTime?
+  completed_at    DateTime?
+  total_tokens    Int       @default(0)
+  total_cost_cents Int      @default(0)
+  created_at      DateTime  @default(now())
+
+  pipeline     Pipeline     @relation(fields: [pipeline_id], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  step_results StepResult[]
+
+  @@index([pipeline_id])
+  @@index([user_id])
+}
+
+model StepResult {
+  id         String     @id @default(uuid()) @db.Uuid
+  run_id     String     @db.Uuid
+  step_id    String     @db.Uuid
+  step_order Int
+  status     StepStatus @default(pending)
+  input      Json       @default("{}")
+  output     Json       @default("{}")
+  tokens_used Int       @default(0)
+  latency_ms  Int       @default(0)
+  error      String?
+  created_at DateTime   @default(now())
+
+  run  Run  @relation(fields: [run_id], references: [id], onDelete: Cascade)
+  step Step @relation(fields: [step_id], references: [id], onDelete: Cascade)
+
+  @@index([run_id])
+}
