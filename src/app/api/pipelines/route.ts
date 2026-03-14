@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET() {
+  console.log("[PIPELINES GET] v2 — no auth checks, build " + Date.now())
   try {
     const user = await getCurrentUser()
 
