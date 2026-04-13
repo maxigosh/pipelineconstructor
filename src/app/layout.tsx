@@ -1,34 +1,26 @@
-import type { Metadata } from "next"
-import localFont from "next/font/local"
-import "./globals.css"
-import { ClientLayout } from "@/components/ClientLayout"
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-})
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-})
+import type { Metadata } from "next";
+import Navigation from "@/components/Navigation";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Pipeline Constructor",
-  description: "Visual constructor for sequential AI pipelines with Kanban interface",
-}
+  title: "ZenFlow — Meditation & Mindfulness",
+  description:
+    "A minimalist meditation app with guided timers, breathing exercises, and mindfulness tracking.",
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
-        <ClientLayout>{children}</ClientLayout>
+    <html lang="en">
+      <body className="min-h-screen">
+        <Navigation />
+        <main className="mx-auto max-w-2xl px-4 pb-24 pt-6 sm:pt-24 sm:pb-8">
+          {children}
+        </main>
       </body>
     </html>
-  )
+  );
 }
